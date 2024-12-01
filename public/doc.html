@@ -1,0 +1,42 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentação - Gestão de Livros</title>
+  <link rel="stylesheet" href="css/about.css">
+  </head>
+  <body>
+
+    <header class="header">
+      <h1>Documentação</h1>
+    </header>
+
+    <nav class="navbar">
+      <a href="/" class="nav-item">Página Principal</a>
+      <a href="/about" class="nav-item">Sobre</a>
+    </nav>
+
+    <div class="content">
+      <section class="about-section">
+      <h2>Rotas da API</h2>
+        <p>
+	        Esta documentação fornece uma visão geral das rotas disponíveis na API para a gestão de livros.
+        </p>
+      <ul class="routes-list">
+        <li><strong>GET /books</strong> - Retorna toda a lista dos livros registados.</li>
+        <li><strong>GET /books/{id}</strong> - Retorna as informações de um livro específico, a partir do seu ID.</li>
+        <li><strong>POST /books</strong> - Adiciona um novo livro no sistema.</li>
+        <li><strong>PUT /books/{id}</strong> - Atualiza as informações de um livro existente, a partir do seu ID.</li>
+        <li><strong>DELETE /books/{id}</strong> - Remove um livro do sistema, a partir do seu ID.</li>
+      </ul>
+	  <br>
+      <h3>Nota:</h3>
+      <p class="info">
+        Para registar um novo livro, os dados necessários incluem: título, autor, editora e edição. Estes campos são obrigatórios para o registo de um novo livro.
+      </p>
+      </section>
+    </div>
+  </body>
+</html>
+
+

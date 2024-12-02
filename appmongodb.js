@@ -1,13 +1,12 @@
 /**
  * @file appmongodb.js
- * @description This file contains a starter implementation of a RESTful API for managing student records using MongoDB.
+ * @description This file contains a RESTful API for managing student records using MongoDB.
  * @version 1.0.0
  * @date 2024-11-20
  * @author pedromoreira
  * @organization ESTG-IPVC
  */
 
-// mongodb native driver setup
 import express from 'express';
 import { MongoClient, ObjectId } from 'mongodb';
 
@@ -22,11 +21,12 @@ let db;
 // Start the server
 async function startServer() {
     try {
-        const client = await MongoClient.connect(url);
+        const client = new MongoClient(url, { useUnifiedTopology: true });
+        await client.connect();
         db = client.db(dbName);
         console.log('Connected to MongoDB');
 
-        // middleware to use connection in every route
+        // Middleware to use the connection in every route
         function setCollection(req, res, next) {
             req.collection = db.collection('students');
             next();
@@ -45,7 +45,7 @@ async function startServer() {
 
 await startServer();
 
-// CRUD endpoints
+// CRUD Endpoints
 
 // Get all students
 app.get('/students', async (req, res) => {
@@ -75,8 +75,13 @@ app.get('/students/:id', async (req, res) => {
 app.post('/students', async (req, res) => {
     try {
         const newStudent = req.body;
+
+        if (!newStudent || Object.keys(newStudent).length === 0) {
+            return res.status(400).send({ error: 'Invalid student data' });
+        }
+
         const result = await req.collection.insertOne(newStudent);
-        res.status(201).json(result.ops[0]); // Send back the created student
+        res.status(201).json({ _id: result.insertedId, ...newStudent }); // Include the generated ID
     } catch (err) {
         res.status(500).send({ error: 'Failed to create student', details: err.message });
     }
@@ -87,6 +92,10 @@ app.put('/students/:id', async (req, res) => {
     try {
         const id = req.params.id;
         const updates = req.body;
+
+        if (!updates || Object.keys(updates).length === 0) {
+            return res.status(400).send({ error: 'Invalid update data' });
+        }
 
         const result = await req.collection.findOneAndUpdate(
             { _id: new ObjectId(id) },
@@ -108,6 +117,7 @@ app.put('/students/:id', async (req, res) => {
 app.delete('/students/:id', async (req, res) => {
     try {
         const id = req.params.id;
+
         const result = await req.collection.findOneAndDelete({ _id: new ObjectId(id) });
 
         if (result.value) {

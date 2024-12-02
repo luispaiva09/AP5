@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public')); // Serve static files from the 'public' directory
 
-const url = MONGOURI;
+const url = process.env.MONGOURI;
 const dbName = 'studentsdb';
 let db;
 

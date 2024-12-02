@@ -21,7 +21,7 @@ let db;
 // Start the server
 async function startServer() {
     try {
-        const client = new MongoClient(url, { useUnifiedTopology: true });
+        const client = new MongoClient(url);
         await client.connect();
         db = client.db(dbName);
         console.log('Connected to MongoDB');

@@ -16,7 +16,10 @@ app.use(express.json());
 app.use(express.static('public')); // Serve static files from the 'public' directory
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/studentsdb');
+mongoose.connect('mongodb://localhost:27017/studentsdb', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
 
 // Define the Student schema
 const studentSchema = new mongoose.Schema({
@@ -28,8 +31,8 @@ const studentSchema = new mongoose.Schema({
 // Create the Student model
 const Student = mongoose.model('Student', studentSchema);
 
-
 // CRUD endpoints
+
 // Get all students
 app.get('/students', async (req, res) => {
     try {
@@ -55,20 +58,47 @@ app.get('/students/:id', async (req, res) => {
 });
 
 // Create a new student
-//================================================================
-// route to create a new student
-//================================================================
+app.post('/students', async (req, res) => {
+    try {
+        const newStudent = new Student(req.body);
+        await newStudent.save();
+        res.status(201).json(newStudent);
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
 
 // Update a student by ID
-//================================================================
-// route to update(save) a  student
-//================================================================
-
+app.put('/students/:id', async (req, res) => {
+    try {
+        const updatedStudent = await Student.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true } // Return the updated document
+        );
+        if (updatedStudent) {
+            res.json(updatedStudent);
+        } else {
+            res.status(404).send('Student not found');
+        }
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
 
 // Delete a student by ID
-//================================================================
-// route to delete a student
-//================================================================
+app.delete('/students/:id', async (req, res) => {
+    try {
+        const deletedStudent = await Student.findByIdAndDelete(req.params.id);
+        if (deletedStudent) {
+            res.json(deletedStudent);
+        } else {
+            res.status(404).send('Student not found');
+        }
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
 
 // Start the server
 const PORT = process.env.PORT || 3000;
